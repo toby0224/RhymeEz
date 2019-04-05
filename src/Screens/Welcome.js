@@ -13,11 +13,22 @@ import {
 
 import CustomButton from "../components/UI/CustomButton";
 
+import API from "../../backend/api";
+
 class Welcome extends Component {
   state = {
     word: "",
-    wordList: []
+    wordList: [],
+    resObj: {}
   };
+
+  componentDidMount() {
+    API.apiRequest().then(res => {
+      this.setState({
+        resObj: res
+      });
+    });
+  }
 
   handleWordChange = word => {
     this.setState({ word: word });
@@ -31,13 +42,11 @@ class Welcome extends Component {
 
   handlePress = () => {
     if (this.state.word) {
-      this.clearField();
       this.state.wordList.push(this.state.word);
+      // pass word props to Rhyme screen
+      this.props.navigation.navigate("Rhyme", { wordd: this.state.word });
+      this.clearField();
     }
-    this.clearField();
-    //alert(this.state.word);
-
-    this.props.navigation.navigate("Rhyme");
   };
 
   render() {
@@ -47,7 +56,11 @@ class Welcome extends Component {
     const listWords = this.state.wordList
       .slice(0)
       .reverse()
-      .map((item, key) => <Text key={key}>{item}</Text>);
+      .map((item, key) => (
+        <Text style={styles.wordStyle} key={key}>
+          {item}
+        </Text>
+      ));
 
     return (
       <ImageBackground
@@ -71,7 +84,9 @@ class Welcome extends Component {
             value={this.state.word}
           />
           <CustomButton
-            onPress={word => this.handlePress(word)}
+            onPress={word => {
+              this.handlePress(word);
+            }}
             color="#29aaf4"
           >
             Submit
@@ -134,8 +149,9 @@ const styles = StyleSheet.create({
   itemList: {
     alignItems: "center"
   },
-  TextStyle: {
+  wordStyle: {
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
+    color: "gray"
   }
 });

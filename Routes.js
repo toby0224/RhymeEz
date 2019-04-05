@@ -16,6 +16,10 @@ const Project = createStackNavigator({
   Rhyme: {
     screen: Rhyme
   },
+  // "Equivalent"
+  Equivalent: {
+    screen: Equivalent
+  },
   // "Synonym"
   Synonym: {
     screen: Synonym
@@ -23,10 +27,6 @@ const Project = createStackNavigator({
   // "Antonym"
   Antonym: {
     screen: Antonym
-  },
-  // "Equivalent"
-  Equivalent: {
-    screen: Equivalent
   }
 });
 export default createAppContainer(Project);

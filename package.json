@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "concurrently 'node node_modules/react-native/local-cli/cli.js start' 'react-native run-ios'  ",
-    "android": "concurrently 'emulator @android' 'react-native run-android' ",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "test": "jest"
   },
   "dependencies": {
@@ -12,6 +13,7 @@
     "react": "16.8.3",
     "react-native": "0.59.3",
     "react-native-gesture-handler": "^1.1.0",
+    "react-native-navigation": "^2.16.0",
     "react-navigation": "^3.6.1"
   },
   "devDependencies": {
