@@ -1,3 +1,5 @@
+# App under construction**
+
 # RhymeEz
 A simple dictionary app to search for rhymes.
 
