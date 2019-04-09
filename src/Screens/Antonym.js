@@ -6,11 +6,14 @@ import {
   StyleSheet,
   ScrollView,
   navigationOptions,
-  ImageBackground
+  ImageBackground,
+  TouchableOpacity
 } from "react-native";
 
 import { StackNavigator } from "react-navigation";
 import API from "../../backend/api";
+import Definition from "./Details";
+import Word from "../components/UI/Word";
 
 class Antonym extends Component {
   // constructor(props) {
@@ -69,11 +72,9 @@ class Antonym extends Component {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
 
-    const outputs = list.slice(0).map((item, key) => (
-      <Text style={styles.items} key={key}>
-        {item}
-      </Text>
-    ));
+    const outputs = list
+      .slice(0)
+      .map((item, i) => <Word word={item} key={i} />);
 
     return (
       <ImageBackground
@@ -85,11 +86,21 @@ class Antonym extends Component {
         <View style={styles.container}>
           <Text style={styles.title}>Antonym</Text>
           <View style={styles.wordContainer}>
-            <Text style={styles.wordSearch}>{this.state.word}</Text>
+            {/* ------ break into title component ---- */}
+            <View>
+              <TouchableOpacity
+                onPress={() => alert("word pressed: " + this.state.word)}
+              >
+                <View style={styles.wordView}>
+                  <Text style={styles.wordSearch}>{this.state.word}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {/* -------------------------------- */}
           </View>
 
           <ScrollView style={styles.historyContainer}>
-            <View style={styles.itemsList}>{outputs}</View>
+            <View>{outputs}</View>
           </ScrollView>
         </View>
       </ImageBackground>
@@ -108,7 +119,7 @@ const styles = StyleSheet.create({
   title: {
     color: "purple",
     paddingTop: 10,
-    fontSize: 20
+    fontSize: 30
   },
   wordSearch: {
     fontSize: 30,
@@ -124,17 +135,6 @@ const styles = StyleSheet.create({
 
   historyContainer: {
     marginBottom: 20,
-    margin: 5,
     width: "100%"
-  },
-  itemsList: {
-    alignItems: "flex-start",
-    margin: 5
-  },
-  items: {
-    fontSize: 20,
-    marginLeft: 20,
-    paddingBottom: 10,
-    textAlign: "center"
   }
 });
