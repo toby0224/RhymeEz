@@ -5,7 +5,9 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ImageBackground
+  ImageBackground,
+  Modal,
+  TouchableOpacity
 } from "react-native";
 
 import { createBottomTabNavigator } from "react-navigation";
@@ -13,14 +15,18 @@ import { createBottomTabNavigator } from "react-navigation";
 import Antonym from "./Antonym";
 import Equivalent from "./Equivalent";
 import Synonym from "./Synonym";
+import Word from "../components/UI/Word";
+import WordList from "../components/UI/WordList";
+import Title from "../components/UI/Title";
 
 import API from "../../backend/api";
 
 class Rhyme extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   // const s = this.props.navigation.state.params.wordd;
-  // }
+  constructor(props) {
+    super(props);
+    const s = this.props.navigation.state.params.wordd;
+    console.log(this.state.rhymeList);
+  }
 
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -73,11 +79,7 @@ class Rhyme extends Component {
       "Rhyme30"
     ];
 
-    const outputs = list.slice(0).map((item, key) => (
-      <Text style={styles.items} key={key}>
-        {item}
-      </Text>
-    ));
+    const outputs = list.map((item, i) => <Word word={item} key={i} />);
 
     return (
       <ImageBackground
@@ -89,11 +91,21 @@ class Rhyme extends Component {
         <View style={styles.container}>
           <Text style={styles.title}>Rhyme</Text>
           <View style={styles.wordContainer}>
-            <Text style={styles.wordSearch}>{this.state.word}</Text>
+            {/* ------ break into title component ---- */}
+            <View>
+              <TouchableOpacity
+                onPress={() => alert("word pressed: " + this.state.word)}
+              >
+                <View style={styles.wordView}>
+                  <Text style={styles.wordSearch}>{this.state.word}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {/* -------------------------------- */}
           </View>
 
-          <ScrollView style={styles.historyContainer}>
-            <View style={styles.itemsList}>{outputs}</View>
+          <ScrollView style={styles.listContainer}>
+            <WordList words={list} />
           </ScrollView>
         </View>
       </ImageBackground>
@@ -101,13 +113,14 @@ class Rhyme extends Component {
   }
 }
 
-//export default Rhyme;
-export default createBottomTabNavigator({
+const bottomNavigation = createBottomTabNavigator({
   Rhyme: Rhyme,
   Equivalent: Equivalent,
   Antonym: Antonym,
   Synonym: Synonym
 });
+
+export default bottomNavigation;
 
 const styles = StyleSheet.create({
   container: {
@@ -118,7 +131,7 @@ const styles = StyleSheet.create({
   title: {
     color: "purple",
     paddingTop: 10,
-    fontSize: 20
+    fontSize: 30
   },
   wordSearch: {
     fontSize: 30,
@@ -132,19 +145,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
 
-  historyContainer: {
+  listContainer: {
     marginBottom: 20,
-    margin: 5,
     width: "100%"
-  },
-  itemsList: {
-    alignItems: "flex-start",
-    margin: 5
-  },
-  items: {
-    fontSize: 20,
-    marginLeft: 20,
-    paddingBottom: 10,
-    textAlign: "center"
   }
 });

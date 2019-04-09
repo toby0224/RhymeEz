@@ -40,7 +40,7 @@ class Welcome extends Component {
     });
   };
 
-  handlePress = () => {
+  handleSubmit = () => {
     if (this.state.word) {
       this.state.wordList.push(this.state.word);
       // pass word props to Rhyme screen
@@ -85,15 +85,18 @@ class Welcome extends Component {
           />
           <CustomButton
             onPress={word => {
-              this.handlePress(word);
+              this.handleSubmit(word);
             }}
             color="#29aaf4"
           >
             Submit
           </CustomButton>
 
-          <View style={{ height: "40%" }}>
-            <ScrollView style={styles.historyContainer}>
+          <View style={styles.historyContainer}>
+            <ScrollView
+              style={styles.historyScrollView}
+              showsVerticalScrollIndicator={false}
+            >
               <View style={styles.itemList}>{listWords}</View>
             </ScrollView>
           </View>
@@ -114,7 +117,7 @@ export default Welcome;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
+    marginTop: 0,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -132,26 +135,28 @@ const styles = StyleSheet.create({
     width: "60%",
     borderRadius: 5,
     textAlign: "center",
-    backgroundColor: "#DCDCDC"
-  },
-  buttonStyle: {
-    backgroundColor: "#DCDCDC",
-    padding: 10,
-    margin: 10,
-    height: 40,
-    alignItems: "center",
-    borderRadius: 5
+    backgroundColor: "transparent",
+    backgroundColor: "rgba(52, 52, 52, 0.1)"
   },
   historyContainer: {
+    height: "40%",
+    width: "100%",
+    alignItems: "center"
+  },
+
+  historyScrollView: {
     margin: 10,
-    width: 200
+    width: 240,
+    backgroundColor: "rgba(52, 52, 52, 0.1)",
+    borderRadius: 5
   },
   itemList: {
-    alignItems: "center"
+    alignItems: "center",
+    padding: 5
   },
   wordStyle: {
     fontSize: 20,
     textAlign: "center",
-    color: "gray"
+    color: "grey"
   }
 });
