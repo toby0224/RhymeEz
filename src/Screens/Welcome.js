@@ -5,7 +5,6 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Button,
   KeyboardAvoidingView,
   ScrollView,
   ImageBackground
@@ -13,25 +12,14 @@ import {
 
 import CustomButton from "../components/UI/CustomButton";
 
-import API from "../../backend/api";
-
 class Welcome extends Component {
   state = {
     word: "",
-    wordList: [],
-    resObj: {}
+    wordList: []
   };
 
-  componentDidMount() {
-    API.apiRequest().then(res => {
-      this.setState({
-        resObj: res
-      });
-    });
-  }
-
   handleWordChange = word => {
-    this.setState({ word: word });
+    this.setState({ word: word.trim() });
   };
 
   clearField = () => {

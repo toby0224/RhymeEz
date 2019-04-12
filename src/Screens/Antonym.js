@@ -5,21 +5,19 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  navigationOptions,
   ImageBackground,
   TouchableOpacity
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
-import API from "../../backend/api";
 import Definition from "./Details";
-import Word from "../components/UI/Word";
+import WordList from "../components/UI/WordList";
+import { getAntonyms } from "../components/Fetch/Wordnik";
 
 class Antonym extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   // const s = this.props.navigation.state.params.wordd;
-  // }
+  constructor(props) {
+    super(props);
+    this.getResult();
+  }
 
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -27,54 +25,20 @@ class Antonym extends Component {
     resObj: {}
   };
 
-  // componentDidMount() {
-  //   API.apiRequest().then(res => {
-  //     this.setState({
-  //       antonyms: res.
-  //     });
-  //   });
-  // }
+  getResult() {
+    getAntonyms(this.state.word)
+      .then(list => {
+        console.log(list[0]);
+        this.setState({
+          antonymList: list[0].words
+        });
+      })
+      .catch(error => console.log(error));
+  }
 
   render() {
-    const list = [
-      "Antonym1",
-      "Antonym2",
-      "Antonym3",
-      "Antonym4",
-      "Antonym5",
-      "Antonym6",
-      "Antonym7",
-      "Antonym8",
-      "Antonym9",
-      "Antonym10",
-      "Antonym11",
-      "Antonym12",
-      "Antonym13",
-      "Antonym14",
-      "Antonym15",
-      "Antonym16",
-      "Antonym17",
-      "Antonym18",
-      "Antonym19",
-      "Antonym20",
-      "Antonym21",
-      "Antonym22",
-      "Antonym23",
-      "Antonym24",
-      "Antonym25",
-      "Antonym26",
-      "Antonym27",
-      "Antonym28",
-      "Antonym29",
-      "Antonym30"
-    ];
-
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
-
-    const outputs = list
-      .slice(0)
-      .map((item, i) => <Word word={item} key={i} />);
 
     return (
       <ImageBackground
@@ -100,7 +64,10 @@ class Antonym extends Component {
           </View>
 
           <ScrollView style={styles.historyContainer}>
-            <View>{outputs}</View>
+            <WordList words={this.state.antonymList} />
+            <Text style={styles.result}>
+              results: {this.state.antonymList.length}
+            </Text>
           </ScrollView>
         </View>
       </ImageBackground>
@@ -136,5 +103,9 @@ const styles = StyleSheet.create({
   historyContainer: {
     marginBottom: 20,
     width: "100%"
+  },
+  result: {
+    margin: 5,
+    textAlign: "center"
   }
 });
