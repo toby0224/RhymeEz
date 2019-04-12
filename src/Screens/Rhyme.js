@@ -15,17 +15,15 @@ import { createBottomTabNavigator } from "react-navigation";
 import Antonym from "./Antonym";
 import Equivalent from "./Equivalent";
 import Synonym from "./Synonym";
-import Word from "../components/UI/Word";
 import WordList from "../components/UI/WordList";
 import Title from "../components/UI/Title";
 
-import API from "../../backend/api";
+import { getRhymes } from "../components/Fetch/Wordnik";
 
 class Rhyme extends Component {
   constructor(props) {
     super(props);
-    const s = this.props.navigation.state.params.wordd;
-    console.log(this.state.rhymeList);
+    this.getResult();
   }
 
   state = {
@@ -34,52 +32,20 @@ class Rhyme extends Component {
     resObj: {}
   };
 
-  // componentDidMount() {
-  //   API.apiRequest().then(res => {
-  //     this.setState({
-  //       rhymes: res.
-  //     });
-  //   });
-  // }
+  getResult() {
+    getRhymes(this.state.word)
+      .then(list => {
+        console.log(list[0].words);
+        this.setState({
+          rhymeList: list[0].words
+        });
+      })
+      .catch(error => console.log(error));
+  }
 
   render() {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
-
-    const list = [
-      "Rhyme1",
-      "Rhyme2",
-      "Rhyme3",
-      "Rhyme4",
-      "Rhyme5",
-      "Rhyme6",
-      "Rhyme7",
-      "Rhyme8",
-      "Rhyme9",
-      "Rhyme10",
-      "Rhyme11",
-      "Rhyme12",
-      "Rhyme13",
-      "Rhyme14",
-      "Rhyme15",
-      "Rhyme16",
-      "Rhyme17",
-      "Rhyme18",
-      "Rhyme19",
-      "Rhyme20",
-      "Rhyme21",
-      "Rhyme22",
-      "Rhyme23",
-      "Rhyme24",
-      "Rhyme25",
-      "Rhyme26",
-      "Rhyme27",
-      "Rhyme28",
-      "Rhyme29",
-      "Rhyme30"
-    ];
-
-    const outputs = list.map((item, i) => <Word word={item} key={i} />);
 
     return (
       <ImageBackground
@@ -105,7 +71,10 @@ class Rhyme extends Component {
           </View>
 
           <ScrollView style={styles.listContainer}>
-            <WordList words={list} />
+            <WordList words={this.state.rhymeList} />
+            <Text style={styles.result}>
+              results: {this.state.rhymeList.length}
+            </Text>
           </ScrollView>
         </View>
       </ImageBackground>
@@ -144,9 +113,12 @@ const styles = StyleSheet.create({
     width: "100%",
     borderBottomWidth: 1
   },
-
   listContainer: {
     marginBottom: 20,
     width: "100%"
+  },
+  result: {
+    margin: 5,
+    textAlign: "center"
   }
 });

@@ -16,3 +16,10 @@ const wordList = props => {
 };
 
 export default wordList;
+
+const styles = StyleSheet.create({
+  result: {
+    fontSize: 20,
+    textAlign: "center"
+  }
+});

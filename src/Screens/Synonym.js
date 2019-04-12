@@ -10,15 +10,17 @@ import {
 } from "react-native";
 
 import { StackNavigator } from "react-navigation";
-import API from "../../backend/api";
 import Definition from "./Details";
 import Word from "../components/UI/Word";
 
+import WordList from "../components/UI/WordList";
+import { getSynonyms } from "../components/Fetch/Wordnik";
+
 class Synonym extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   // const s = this.props.navigation.state.params.wordd;
-  // }
+  constructor(props) {
+    super(props);
+    this.getResult();
+  }
 
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -26,53 +28,19 @@ class Synonym extends Component {
     resObj: {}
   };
 
-  // componentDidMount() {
-  //   API.apiRequest().then(res => {
-  //     this.setState({
-  //       synonyms: res.
-  //     });
-  //   });
-  // }
+  getResult() {
+    getSynonyms(this.state.word)
+      .then(list => {
+        this.setState({
+          synonymList: list[0].words
+        });
+      })
+      .catch(error => console.log(error));
+  }
 
   render() {
-    const list = [
-      "Synonym1",
-      "Synonym2",
-      "Synonym3",
-      "Synonym4",
-      "Synonym5",
-      "Synonym6",
-      "Synonym7",
-      "Synonym8",
-      "Synonym9",
-      "Synonym10",
-      "Synonym11",
-      "Synonym12",
-      "Synonym13",
-      "Synonym14",
-      "Synonym15",
-      "Synonym16",
-      "Synonym17",
-      "Synonym18",
-      "Synonym19",
-      "Synonym20",
-      "Synonym21",
-      "Synonym22",
-      "Synonym23",
-      "Synonym24",
-      "Synonym25",
-      "Synonym26",
-      "Synonym27",
-      "Synonym28",
-      "Synonym29",
-      "Synonym30"
-    ];
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
-
-    const outputs = list
-      .slice(0)
-      .map((item, i) => <Word word={item} key={i} />);
 
     return (
       <ImageBackground
@@ -83,6 +51,7 @@ class Synonym extends Component {
       >
         <View style={styles.container}>
           <Text style={styles.title}>Synonym</Text>
+
           <View style={styles.wordContainer}>
             {/* ------ break into title component ---- */}
             <View>
@@ -98,7 +67,10 @@ class Synonym extends Component {
           </View>
 
           <ScrollView style={styles.listContainer}>
-            <View>{outputs}</View>
+            <WordList words={this.state.synonymList} />
+            <Text style={styles.result}>
+              results: {this.state.synonymList.length}
+            </Text>
           </ScrollView>
         </View>
       </ImageBackground>
@@ -134,5 +106,9 @@ const styles = StyleSheet.create({
   listContainer: {
     marginBottom: 20,
     width: "100%"
+  },
+  result: {
+    margin: 5,
+    textAlign: "center"
   }
 });
