@@ -16,24 +16,35 @@ import { getAntonyms } from "../components/Fetch/Wordnik";
 class Antonym extends Component {
   constructor(props) {
     super(props);
-    this.getResult();
   }
 
   state = {
     word: this.props.navigation.state.params.wordd,
     antonymList: [],
-    resObj: {}
+    isLoading: false
   };
 
-  getResult() {
+  componentDidMount() {
+    this.setState({ isLoading: true });
     getAntonyms(this.state.word)
       .then(list => {
-        console.log(list[0]);
+        console.log(list[0].words);
         this.setState({
-          antonymList: list[0].words
+          antonymList: list[0].words,
+          isLoading: false
         });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error), this.setState({ isLoading: false });
+      });
+  }
+
+  results() {
+    if (this.state.isLoading === true) {
+      return <Text>Loading...</Text>;
+    } else {
+      return <Text>results: {this.state.antonymList.length}</Text>;
+    }
   }
 
   render() {
@@ -65,9 +76,7 @@ class Antonym extends Component {
 
           <ScrollView style={styles.historyContainer}>
             <WordList words={this.state.antonymList} />
-            <Text style={styles.result}>
-              results: {this.state.antonymList.length}
-            </Text>
+            <Text style={styles.result}>{this.results()}</Text>
           </ScrollView>
         </View>
       </ImageBackground>
