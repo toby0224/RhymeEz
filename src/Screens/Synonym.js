@@ -19,23 +19,35 @@ import { getSynonyms } from "../components/Fetch/Wordnik";
 class Synonym extends Component {
   constructor(props) {
     super(props);
-    this.getResult();
   }
 
   state = {
     word: this.props.navigation.state.params.wordd,
     synonymList: [],
-    resObj: {}
+    isLoading: false
   };
 
-  getResult() {
+  componentDidMount() {
+    this.setState({ isLoading: true });
     getSynonyms(this.state.word)
       .then(list => {
+        console.log(list[0].words);
         this.setState({
-          synonymList: list[0].words
+          synonymList: list[0].words,
+          isLoading: false
         });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error), this.setState({ isLoading: false });
+      });
+  }
+
+  results() {
+    if (this.state.isLoading === true) {
+      return <Text>Loading...</Text>;
+    } else {
+      return <Text>results: {this.state.synonymList.length}</Text>;
+    }
   }
 
   render() {
@@ -68,9 +80,7 @@ class Synonym extends Component {
 
           <ScrollView style={styles.listContainer}>
             <WordList words={this.state.synonymList} />
-            <Text style={styles.result}>
-              results: {this.state.synonymList.length}
-            </Text>
+            <Text style={styles.result}>{this.results()}</Text>
           </ScrollView>
         </View>
       </ImageBackground>

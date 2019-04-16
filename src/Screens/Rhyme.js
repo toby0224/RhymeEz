@@ -23,30 +23,42 @@ import { getRhymes } from "../components/Fetch/Wordnik";
 class Rhyme extends Component {
   constructor(props) {
     super(props);
-    this.getResult();
   }
 
   state = {
     word: this.props.navigation.state.params.wordd,
     rhymeList: [],
-    resObj: {}
+    isLoading: false
   };
 
-  getResult() {
+  componentDidMount() {
+    this.setState({ isLoading: true });
     getRhymes(this.state.word)
       .then(list => {
         console.log(list[0].words);
         this.setState({
-          rhymeList: list[0].words
+          rhymeList: list[0].words,
+          isLoading: false
         });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error), this.setState({ isLoading: false });
+      });
+  }
+
+  results() {
+    if (this.state.isLoading === true) {
+      return <Text>Loading...</Text>;
+    } else {
+      return <Text>results: {this.state.rhymeList.length}</Text>;
+    }
   }
 
   render() {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
 
+    const { isLoading } = this.state;
     return (
       <ImageBackground
         source={{
@@ -72,9 +84,7 @@ class Rhyme extends Component {
 
           <ScrollView style={styles.listContainer}>
             <WordList words={this.state.rhymeList} />
-            <Text style={styles.result}>
-              results: {this.state.rhymeList.length}
-            </Text>
+            <Text style={styles.result}>{this.results()}</Text>
           </ScrollView>
         </View>
       </ImageBackground>

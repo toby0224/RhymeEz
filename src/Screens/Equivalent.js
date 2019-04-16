@@ -15,24 +15,34 @@ import { getEquivalents } from "../components/Fetch/Wordnik";
 class Equivalent extends Component {
   constructor(props) {
     super(props);
-    this.getResult();
   }
 
   state = {
     word: this.props.navigation.state.params.wordd,
     equivalentList: [],
-    resObj: {}
+    isLoading: false
   };
 
-  getResult() {
+  componentDidMount() {
+    this.setState({ isLoading: true });
     getEquivalents(this.state.word)
       .then(list => {
         console.log(list[0].words);
         this.setState({
-          equivalentList: list[0].words
+          equivalentList: list[0].words,
+          isLoading: false
         });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error), this.setState({ isLoading: false });
+      });
+  }
+  results() {
+    if (this.state.isLoading === true) {
+      return <Text>Loading...</Text>;
+    } else {
+      return <Text>results: {this.state.equivalentList.length}</Text>;
+    }
   }
 
   render() {
@@ -64,9 +74,7 @@ class Equivalent extends Component {
 
           <ScrollView style={styles.listContainer}>
             <WordList words={this.state.equivalentList} />
-            <Text style={styles.result}>
-              results: {this.state.equivalentList.length}
-            </Text>
+            <Text style={styles.result}>{this.results()}</Text>
           </ScrollView>
         </View>
       </ImageBackground>
