@@ -15,6 +15,9 @@ import { createBottomTabNavigator } from "react-navigation";
 import Antonym from "./Antonym";
 import Equivalent from "./Equivalent";
 import Synonym from "./Synonym";
+
+import Definition from "./Details";
+
 import WordList from "../components/UI/WordList";
 import Title from "../components/UI/Title";
 
@@ -28,7 +31,8 @@ class Rhyme extends Component {
   state = {
     word: this.props.navigation.state.params.wordd,
     rhymeList: [],
-    isLoading: false
+    isLoading: false,
+    selectedWord: null
   };
 
   componentDidMount() {
@@ -47,46 +51,45 @@ class Rhyme extends Component {
   }
 
   results() {
-    if (this.state.isLoading === true) {
+    if (this.state.isLoading) {
       return <Text>Loading...</Text>;
+    } else if (this.state.rhymeList.length === 0) {
+      return <Text>No results</Text>;
     } else {
       return <Text>results: {this.state.rhymeList.length}</Text>;
     }
+  }
+
+  displayRhymeScreen() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Rhyme</Text>
+        <View style={styles.wordContainer}>
+          <Title
+            title={this.state.word}
+            onItemPressed={() => alert("title pressed")}
+          />
+        </View>
+        <ScrollView style={styles.listContainer}>
+          <WordList words={this.state.rhymeList} />
+          <Text style={styles.result}>{this.results()}</Text>
+        </ScrollView>
+      </View>
+    );
   }
 
   render() {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
 
-    const { isLoading } = this.state;
     return (
       <ImageBackground
         source={{
           uri: image
         }}
-        style={{ width: "100%", height: "100%" }}
+        style={styles.background}
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>Rhyme</Text>
-          <View style={styles.wordContainer}>
-            {/* ------ break into title component ---- */}
-            <View>
-              <TouchableOpacity
-                onPress={() => alert("word pressed: " + this.state.word)}
-              >
-                <View style={styles.wordView}>
-                  <Text style={styles.wordSearch}>{this.state.word}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            {/* -------------------------------- */}
-          </View>
-
-          <ScrollView style={styles.listContainer}>
-            <WordList words={this.state.rhymeList} />
-            <Text style={styles.result}>{this.results()}</Text>
-          </ScrollView>
-        </View>
+        {this.displayRhymeScreen()}
       </ImageBackground>
     );
   }
@@ -102,6 +105,10 @@ const bottomNavigation = createBottomTabNavigator({
 export default bottomNavigation;
 
 const styles = StyleSheet.create({
+  background: {
+    width: "100%",
+    height: "100%"
+  },
   container: {
     flex: 1,
     alignItems: "center",

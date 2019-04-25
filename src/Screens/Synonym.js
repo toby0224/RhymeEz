@@ -9,12 +9,9 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import { StackNavigator } from "react-navigation";
-import Definition from "./Details";
-import Word from "../components/UI/Word";
-
 import WordList from "../components/UI/WordList";
 import { getSynonyms } from "../components/Fetch/Wordnik";
+import Title from "../components/UI/Title";
 
 class Synonym extends Component {
   constructor(props) {
@@ -31,7 +28,6 @@ class Synonym extends Component {
     this.setState({ isLoading: true });
     getSynonyms(this.state.word)
       .then(list => {
-        console.log(list[0].words);
         this.setState({
           synonymList: list[0].words,
           isLoading: false
@@ -45,9 +41,31 @@ class Synonym extends Component {
   results() {
     if (this.state.isLoading === true) {
       return <Text>Loading...</Text>;
+    } else if (this.state.synonymList.length === 0) {
+      return <Text>No results</Text>;
     } else {
       return <Text>results: {this.state.synonymList.length}</Text>;
     }
+  }
+
+  displaySynonymScreen() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Synonym</Text>
+
+        <View style={styles.wordContainer}>
+          <Title
+            title={this.state.word}
+            onItemPressed={() => alert("title pressed")}
+          />
+        </View>
+
+        <ScrollView style={styles.listContainer}>
+          <WordList words={this.state.synonymList} />
+          <Text style={styles.result}>{this.results()}</Text>
+        </ScrollView>
+      </View>
+    );
   }
 
   render() {
@@ -59,30 +77,9 @@ class Synonym extends Component {
         source={{
           uri: image
         }}
-        style={{ width: "100%", height: "100%" }}
+        style={styles.background}
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>Synonym</Text>
-
-          <View style={styles.wordContainer}>
-            {/* ------ break into title component ---- */}
-            <View>
-              <TouchableOpacity
-                onPress={() => alert("word pressed: " + this.state.word)}
-              >
-                <View style={styles.wordView}>
-                  <Text style={styles.wordSearch}>{this.state.word}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            {/* -------------------------------- */}
-          </View>
-
-          <ScrollView style={styles.listContainer}>
-            <WordList words={this.state.synonymList} />
-            <Text style={styles.result}>{this.results()}</Text>
-          </ScrollView>
-        </View>
+        {this.displaySynonymScreen()}
       </ImageBackground>
     );
   }
@@ -91,6 +88,10 @@ class Synonym extends Component {
 export default Synonym;
 
 const styles = StyleSheet.create({
+  background: {
+    width: "100%",
+    height: "100%"
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -100,10 +101,6 @@ const styles = StyleSheet.create({
     color: "purple",
     paddingTop: 10,
     fontSize: 30
-  },
-  wordSearch: {
-    fontSize: 30,
-    textAlign: "center"
   },
   wordContainer: {
     marginTop: 30,
