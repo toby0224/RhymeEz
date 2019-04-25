@@ -11,6 +11,7 @@ import {
 
 import WordList from "../components/UI/WordList";
 import { getEquivalents } from "../components/Fetch/Wordnik";
+import Title from "../components/UI/Title";
 
 class Equivalent extends Component {
   constructor(props) {
@@ -40,9 +41,31 @@ class Equivalent extends Component {
   results() {
     if (this.state.isLoading === true) {
       return <Text>Loading...</Text>;
+    } else if (this.state.equivalentList.length === 0) {
+      return <Text>No results</Text>;
     } else {
       return <Text>results: {this.state.equivalentList.length}</Text>;
     }
+  }
+
+  displayEquivalentScreen() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Equivalent</Text>
+
+        <View style={styles.wordContainer}>
+          <Title
+            title={this.state.word}
+            onItemPressed={() => alert("title pressed")}
+          />
+        </View>
+
+        <ScrollView style={styles.listContainer}>
+          <WordList words={this.state.equivalentList} />
+          <Text style={styles.result}>{this.results()}</Text>
+        </ScrollView>
+      </View>
+    );
   }
 
   render() {
@@ -53,30 +76,9 @@ class Equivalent extends Component {
         source={{
           uri: image
         }}
-        style={{ width: "100%", height: "100%" }}
+        style={styles.background}
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>Equivalent</Text>
-
-          <View style={styles.wordContainer}>
-            {/* ------ break into title component ---- */}
-            <View>
-              <TouchableOpacity
-                onPress={() => alert("word pressed: " + this.state.word)}
-              >
-                <View style={styles.wordView}>
-                  <Text style={styles.wordSearch}>{this.state.word}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            {/* -------------------------------- */}
-          </View>
-
-          <ScrollView style={styles.listContainer}>
-            <WordList words={this.state.equivalentList} />
-            <Text style={styles.result}>{this.results()}</Text>
-          </ScrollView>
-        </View>
+        {this.displayEquivalentScreen()}
       </ImageBackground>
     );
   }
@@ -85,6 +87,10 @@ class Equivalent extends Component {
 export default Equivalent;
 
 const styles = StyleSheet.create({
+  background: {
+    width: "100%",
+    height: "100%"
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -94,10 +100,6 @@ const styles = StyleSheet.create({
     color: "purple",
     paddingTop: 10,
     fontSize: 30
-  },
-  wordSearch: {
-    fontSize: 30,
-    textAlign: "center"
   },
   wordContainer: {
     marginTop: 30,

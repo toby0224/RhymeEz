@@ -12,6 +12,7 @@ import {
 import Definition from "./Details";
 import WordList from "../components/UI/WordList";
 import { getAntonyms } from "../components/Fetch/Wordnik";
+import Title from "../components/UI/Title";
 
 class Antonym extends Component {
   constructor(props) {
@@ -28,7 +29,6 @@ class Antonym extends Component {
     this.setState({ isLoading: true });
     getAntonyms(this.state.word)
       .then(list => {
-        console.log(list[0].words);
         this.setState({
           antonymList: list[0].words,
           isLoading: false
@@ -42,11 +42,30 @@ class Antonym extends Component {
   results() {
     if (this.state.isLoading === true) {
       return <Text>Loading...</Text>;
+    } else if (this.state.antonymList.length === 0) {
+      return <Text>No results</Text>;
     } else {
       return <Text>results: {this.state.antonymList.length}</Text>;
     }
   }
 
+  displayAntonymScreen() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Antonym</Text>
+        <View style={styles.wordContainer}>
+          <Title
+            title={this.state.word}
+            onItemPressed={() => alert("title pressed")}
+          />
+        </View>
+        <ScrollView style={styles.historyContainer}>
+          <WordList words={this.state.antonymList} />
+          <Text style={styles.result}>{this.results()}</Text>
+        </ScrollView>
+      </View>
+    );
+  }
   render() {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
@@ -56,29 +75,9 @@ class Antonym extends Component {
         source={{
           uri: image
         }}
-        style={{ width: "100%", height: "100%" }}
+        style={styles.background}
       >
-        <View style={styles.container}>
-          <Text style={styles.title}>Antonym</Text>
-          <View style={styles.wordContainer}>
-            {/* ------ break into title component ---- */}
-            <View>
-              <TouchableOpacity
-                onPress={() => alert("word pressed: " + this.state.word)}
-              >
-                <View style={styles.wordView}>
-                  <Text style={styles.wordSearch}>{this.state.word}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            {/* -------------------------------- */}
-          </View>
-
-          <ScrollView style={styles.historyContainer}>
-            <WordList words={this.state.antonymList} />
-            <Text style={styles.result}>{this.results()}</Text>
-          </ScrollView>
-        </View>
+        {this.displayAntonymScreen()}
       </ImageBackground>
     );
   }
@@ -87,6 +86,10 @@ class Antonym extends Component {
 export default Antonym;
 
 const styles = StyleSheet.create({
+  background: {
+    width: "100%",
+    height: "100%"
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -96,10 +99,6 @@ const styles = StyleSheet.create({
     color: "purple",
     paddingTop: 10,
     fontSize: 30
-  },
-  wordSearch: {
-    fontSize: 30,
-    textAlign: "center"
   },
   wordContainer: {
     marginTop: 30,

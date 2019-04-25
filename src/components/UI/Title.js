@@ -1,25 +1,21 @@
 import React from "react";
 
-import { TouchableWithoutFeedback, View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const title = props => {
-  const titleOutput = props => (
-    <TouchableWithoutFeedback onPress={props.onItemPressed}>
-      <View style={styles.wordView}>
-        <Text style={styles.wordSearch}>{props.title}</Text>
-      </View>
-    </TouchableWithoutFeedback>
-  );
-  return <View>{titleOutput}</View>;
-};
+const title = props => (
+  <TouchableOpacity onPress={props.onItemPressed}>
+    <View style={styles.listItem}>
+      <Text style={styles.title}>{props.title}</Text>
+    </View>
+  </TouchableOpacity>
+);
+
 export default title;
 
 const styles = StyleSheet.create({
-  wordView: {
-    backgroundColor: "red"
-  },
-  wordSearch: {
+  title: {
+    textAlign: "center",
+    color: "purple",
     fontSize: 30
   }
 });
-1;
