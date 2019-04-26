@@ -5,6 +5,8 @@ import CustomButton from "./CustomButton";
 
 import Details from "./Details";
 
+Array.prototype.isArray = true;
+
 class DefinitionModal extends Component {
   state = {
     //definition: this.props.definition,
@@ -19,15 +21,20 @@ class DefinitionModal extends Component {
     this.props.closeModal(); // trigger method of parent compoenent to close modal
   }
 
-  displayDefinition(definition) {
-    // need to handle TypeError
-    if (definition == null || definition === undefined)
-      return <Text style={{ textAlign: "center" }}>An error occurred</Text>;
+  displayDefinition(definitionArray) {
+    console.log(definitionArray);
+    // handle case when defitionArray is not an array, but is an error object
+    if (!definitionArray.isArray)
+      return (
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.warning}>Warning:</Text>
+          <Text>{definitionArray.message}</Text>
+        </View>
+      );
+    else if (!definitionArray)
+      return <Text style={{ textAlign: "center" }}>definition error</Text>;
     else {
-      return definition.map((
-        index,
-        i //
-      ) => (
+      return definitionArray.map((index, i) => (
         <View key={i}>
           <Details partOfSpeech={index.partOfSpeech} text={index.text} />
         </View>
@@ -89,6 +96,12 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderColor: "black",
     borderWidth: 0.5
+  },
+  warning: {
+    margin: 10,
+    color: "red",
+    fontSize: 20,
+    fontWeight: "bold"
   },
   title: {
     fontSize: 30,

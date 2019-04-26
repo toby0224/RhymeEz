@@ -53,6 +53,7 @@ class Rhyme extends Component {
     this.getDefinition(selectedWord);
     this.triggerModal();
   }
+
   getDefinition = selectedWord => {
     getDefinition(selectedWord)
       .then(list => {
@@ -111,7 +112,6 @@ class Rhyme extends Component {
             closeModal={this.closeModal.bind(this)}
             definition={this.state.definition}
           />
-
           <Text style={styles.result}>{this.results()}</Text>
         </ScrollView>
       </View>

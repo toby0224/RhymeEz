@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center"
   },
-
   historyScrollView: {
     margin: 10,
     width: 240,
