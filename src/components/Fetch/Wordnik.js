@@ -23,3 +23,8 @@ export const getSynonyms = word => {
   const URL = `https://api.wordnik.com/v4/word.json/${word}/relatedWords?useCanonical=false&relationshipTypes=synonym&limitPerRelationshipType=499&api_key=${API_KEY}`;
   return fetch(URL).then(res => res.json()); // return a json to client
 };
+
+export const getDefinition = word => {
+  const URL = `https://api.wordnik.com/v4/word.json/${word}/definitions?limit=50&includeRelated=false&sourceDictionaries=all&useCanonical=false&includeTags=false&api_key=${API_KEY}`;
+  return fetch(URL).then(res => res.json()); // return a json to client
+};

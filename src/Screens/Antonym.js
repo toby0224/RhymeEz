@@ -9,7 +9,6 @@ import {
   TouchableOpacity
 } from "react-native";
 
-import Definition from "./Details";
 import WordList from "../components/UI/WordList";
 import { getAntonyms } from "../components/Fetch/Wordnik";
 import Title from "../components/UI/Title";
