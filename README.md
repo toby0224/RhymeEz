@@ -19,5 +19,8 @@ A simple dictionary app focuses on showing rhymes, equivalents, synonyms and ant
     - start android simulator.
     - "react-native run-android".
     
-    **** note: you can create your own API_KEY from wordnik.com
+    
+ 
+ **** note: you can create your own API_KEY from wordnik.com
       - then replace your key with mine in the file /src/components/Fetch/Wordnik.js
+ ****
