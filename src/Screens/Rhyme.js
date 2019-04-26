@@ -5,9 +5,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ImageBackground,
-  Modal,
-  TouchableOpacity
+  ImageBackground
 } from "react-native";
 
 import { createBottomTabNavigator } from "react-navigation";
@@ -16,38 +14,68 @@ import Antonym from "./Antonym";
 import Equivalent from "./Equivalent";
 import Synonym from "./Synonym";
 
-import Definition from "./Details";
-
 import WordList from "../components/UI/WordList";
+import DefinitionModal from "../components/UI/DefinitionModal";
 import Title from "../components/UI/Title";
 
-import { getRhymes } from "../components/Fetch/Wordnik";
+import { getRhymes, getDefinition } from "../components/Fetch/Wordnik";
 
 class Rhyme extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     word: this.props.navigation.state.params.wordd,
     rhymeList: [],
     isLoading: false,
-    selectedWord: null
+    modalVisible: false, // control state of Modal,
+    definition: [],
+    selectedWord: ""
   };
+
+  //selectedWord = ""; // word pass to modal
 
   componentDidMount() {
     this.setState({ isLoading: true });
     getRhymes(this.state.word)
       .then(list => {
-        console.log(list[0].words);
         this.setState({
           rhymeList: list[0].words,
           isLoading: false
         });
       })
       .catch(error => {
-        console.log(error), this.setState({ isLoading: false });
+        console.log(error.message), this.setState({ isLoading: false });
       });
+  }
+
+  onSelectedWord(selectedWord) {
+    this.setState({
+      selectedWord: selectedWord
+    }); // set selected word to pass to Modal
+    this.getDefinition(selectedWord);
+    this.triggerModal();
+  }
+
+  getDefinition = selectedWord => {
+    getDefinition(selectedWord)
+      .then(list => {
+        this.setState({
+          definition: list
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  triggerModal() {
+    this.setState({
+      modalVisible: true
+    });
+  }
+  closeModal() {
+    this.setState({
+      modalVisible: false,
+      definition: []
+    });
   }
 
   results() {
@@ -67,11 +95,23 @@ class Rhyme extends Component {
         <View style={styles.wordContainer}>
           <Title
             title={this.state.word}
-            onItemPressed={() => alert("title pressed")}
+            onItemPressed={() => this.onSelectedWord(this.state.word)}
           />
         </View>
-        <ScrollView style={styles.listContainer}>
-          <WordList words={this.state.rhymeList} />
+        <ScrollView
+          style={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          <WordList
+            words={this.state.rhymeList}
+            selectedWord={this.onSelectedWord.bind(this)} // to receive data back from child component
+          />
+          <DefinitionModal
+            selectedWord={this.state.selectedWord}
+            visible={this.state.modalVisible}
+            closeModal={this.closeModal.bind(this)}
+            definition={this.state.definition}
+          />
           <Text style={styles.result}>{this.results()}</Text>
         </ScrollView>
       </View>
@@ -81,7 +121,6 @@ class Rhyme extends Component {
   render() {
     const image =
       "http://s.facegfx.com/image/2014/8/21/alphabet-gray-background-vector-graphics-free.jpg";
-
     return (
       <ImageBackground
         source={{
@@ -109,6 +148,24 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%"
   },
+  modalContainer: {
+    flex: 1,
+    width: "60%%",
+    height: "60%",
+    margin: "auto",
+    backgroundColor: "grey",
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "black"
+  },
+  innerModal: {
+    alignContent: "center",
+    alignItems: "center",
+    borderColor: "black",
+    borderWidth: 1,
+    margin: "auto"
+  },
+
   container: {
     flex: 1,
     alignItems: "center",

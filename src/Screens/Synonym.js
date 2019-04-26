@@ -5,23 +5,22 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  ImageBackground,
-  TouchableOpacity
+  ImageBackground
 } from "react-native";
 
 import WordList from "../components/UI/WordList";
-import { getSynonyms } from "../components/Fetch/Wordnik";
+import { getSynonyms, getDefinition } from "../components/Fetch/Wordnik";
 import Title from "../components/UI/Title";
+import DefinitionModal from "../components/UI/DefinitionModal";
 
 class Synonym extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   state = {
     word: this.props.navigation.state.params.wordd,
     synonymList: [],
-    isLoading: false
+    isLoading: false,
+    modalVisible: false, // control state of Modal,
+    definition: [],
+    selectedWord: ""
   };
 
   componentDidMount() {
@@ -34,8 +33,38 @@ class Synonym extends Component {
         });
       })
       .catch(error => {
-        console.log(error), this.setState({ isLoading: false });
+        console.log(error.message), this.setState({ isLoading: false });
       });
+  }
+  onSelectedWord(selectedWord) {
+    this.setState({
+      selectedWord: selectedWord
+    }); // set selected word to pass to Modal
+    this.getDefinition(selectedWord);
+    this.triggerModal();
+  }
+  getDefinition = selectedWord => {
+    getDefinition(selectedWord)
+      .then(list => {
+        this.setState({
+          definition: list
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  triggerModal() {
+    this.setState({
+      modalVisible: true
+    });
+  }
+  closeModal() {
+    this.setState({
+      modalVisible: false,
+      definition: []
+    });
   }
 
   results() {
@@ -61,7 +90,16 @@ class Synonym extends Component {
         </View>
 
         <ScrollView style={styles.listContainer}>
-          <WordList words={this.state.synonymList} />
+          <WordList
+            words={this.state.synonymList}
+            selectedWord={this.onSelectedWord.bind(this)} // to receive data back from child component
+          />
+          <DefinitionModal
+            selectedWord={this.state.selectedWord}
+            visible={this.state.modalVisible}
+            closeModal={this.closeModal.bind(this)}
+            definition={this.state.definition}
+          />
           <Text style={styles.result}>{this.results()}</Text>
         </ScrollView>
       </View>
@@ -92,6 +130,23 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%"
   },
+  modalContainer: {
+    flex: 1,
+    width: "60%%",
+    height: "60%",
+    margin: "auto",
+    backgroundColor: "grey",
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "black"
+  },
+  innerModal: {
+    alignContent: "center",
+    alignItems: "center",
+    borderColor: "black",
+    borderWidth: 1,
+    margin: "auto"
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -109,7 +164,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderBottomWidth: 1
   },
-
   listContainer: {
     marginBottom: 20,
     width: "100%"

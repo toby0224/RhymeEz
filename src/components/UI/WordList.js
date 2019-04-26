@@ -1,21 +1,32 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { Component } from "react";
+import { View, StyleSheet } from "react-native";
 
 import Word from "./Word";
 
-const wordList = props => {
-  const wordsOutput = props.words.map((word, i) => (
-    <Word
-      word={word}
-      key={i}
-      onItemPressed={() => alert("word pressed: " + word)}
-    />
-  ));
+class WordList extends Component {
+  wordsOutput(words) {
+    // return array of words in list form
+    return words.map((word, i) => (
+      <Word
+        word={word}
+        key={i}
+        onItemPressed={() => {
+          this.sendWord(word); // return selected word to parent through sendWord()
+        }}
+      />
+    ));
+  }
 
-  return <View>{wordsOutput}</View>;
-};
+  sendWord(word) {
+    this.props.selectedWord(word); // send back data to parent class
+  }
 
-export default wordList;
+  render() {
+    return <View>{this.wordsOutput(this.props.words)}</View>;
+  }
+}
+
+export default WordList;
 
 const styles = StyleSheet.create({
   result: {

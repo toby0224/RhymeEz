@@ -22,7 +22,9 @@ const styles = StyleSheet.create({
   listItem: {
     width: "100%",
     margin: 5,
-    padding: 10,
+    paddingLeft: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
     backgroundColor: "rgba(52, 52, 52, 0.05)"
   },
   wordStyle: {

@@ -29,7 +29,6 @@ const customButton = props => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#DCDCDC",
     padding: 10,
     margin: 10,
     height: 40,
