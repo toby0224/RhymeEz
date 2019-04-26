@@ -13,6 +13,8 @@ import { getEquivalents, getDefinition } from "../components/Fetch/Wordnik";
 import Title from "../components/UI/Title";
 import DefinitionModal from "../components/UI/DefinitionModal";
 
+Array.prototype.isArray = true;
+
 class Equivalent extends Component {
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -20,18 +22,26 @@ class Equivalent extends Component {
     isLoading: false,
     modalVisible: false, // control state of Modal,
     definition: [],
-    selectedWord: ""
+    selectedWord: "",
+    error: ""
   };
 
   componentDidMount() {
     this.setState({ isLoading: true });
     getEquivalents(this.state.word)
       .then(list => {
-        // handle if list is undefine
-        this.setState({
-          equivalentList: list[0].words,
-          isLoading: false
-        });
+        if (!list.isArray) {
+          console.log(list.message + "... list from equivalent");
+          this.setState({
+            error: list.message
+          });
+        } else {
+          // handle if list is undefine
+          this.setState({
+            equivalentList: list[0].words,
+            isLoading: false
+          });
+        }
       })
       .catch(error => {
         console.log(error.message), this.setState({ isLoading: false });
@@ -94,9 +104,25 @@ class Equivalent extends Component {
         </View>
 
         <ScrollView style={styles.listContainer}>
+          {this.checkLimit()}
+        </ScrollView>
+      </View>
+    );
+  }
+  checkLimit() {
+    if (this.state.error)
+      return (
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.warning}>Warning:</Text>
+          <Text>{this.state.error}</Text>
+        </View>
+      );
+    else
+      return (
+        <View>
           <WordList
             words={this.state.equivalentList}
-            selectedWord={this.onSelectedWord.bind(this)}
+            selectedWord={this.onSelectedWord.bind(this)} // to receive data back from child component
           />
           <DefinitionModal
             selectedWord={this.state.selectedWord}
@@ -104,11 +130,9 @@ class Equivalent extends Component {
             closeModal={this.closeModal.bind(this)}
             definition={this.state.definition}
           />
-
           <Text style={styles.result}>{this.results()}</Text>
-        </ScrollView>
-      </View>
-    );
+        </View>
+      );
   }
 
   render() {
@@ -133,6 +157,12 @@ const styles = StyleSheet.create({
   background: {
     width: "100%",
     height: "100%"
+  },
+  warning: {
+    margin: 10,
+    color: "red",
+    fontSize: 20,
+    fontWeight: "bold"
   },
 
   modalContainer: {
