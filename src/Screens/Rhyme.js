@@ -20,6 +20,8 @@ import Title from "../components/UI/Title";
 
 import { getRhymes, getDefinition } from "../components/Fetch/Wordnik";
 
+Array.prototype.isArray = true;
+
 class Rhyme extends Component {
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -27,19 +29,25 @@ class Rhyme extends Component {
     isLoading: false,
     modalVisible: false, // control state of Modal,
     definition: [],
-    selectedWord: ""
+    selectedWord: "",
+    error: ""
   };
-
-  //selectedWord = ""; // word pass to modal
 
   componentDidMount() {
     this.setState({ isLoading: true });
     getRhymes(this.state.word)
       .then(list => {
-        this.setState({
-          rhymeList: list[0].words,
-          isLoading: false
-        });
+        if (!list.isArray) {
+          console.log(list.message + "... list from rhyme");
+          this.setState({
+            error: list.message
+          });
+        } else {
+          this.setState({
+            rhymeList: list[0].words,
+            isLoading: false
+          });
+        }
       })
       .catch(error => {
         console.log(error.message), this.setState({ isLoading: false });
@@ -102,6 +110,23 @@ class Rhyme extends Component {
           style={styles.listContainer}
           showsVerticalScrollIndicator={false}
         >
+          {this.checkLimit()}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  checkLimit() {
+    if (this.state.error)
+      return (
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.warning}>Warning:</Text>
+          <Text>{this.state.error}</Text>
+        </View>
+      );
+    else
+      return (
+        <View>
           <WordList
             words={this.state.rhymeList}
             selectedWord={this.onSelectedWord.bind(this)} // to receive data back from child component
@@ -113,9 +138,8 @@ class Rhyme extends Component {
             definition={this.state.definition}
           />
           <Text style={styles.result}>{this.results()}</Text>
-        </ScrollView>
-      </View>
-    );
+        </View>
+      );
   }
 
   render() {
@@ -148,6 +172,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%"
   },
+  warning: {
+    margin: 10,
+    color: "red",
+    fontSize: 20,
+    fontWeight: "bold"
+  },
   modalContainer: {
     flex: 1,
     width: "60%%",
@@ -165,7 +195,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     margin: "auto"
   },
-
   container: {
     flex: 1,
     alignItems: "center",

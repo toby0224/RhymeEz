@@ -13,6 +13,8 @@ import { getSynonyms, getDefinition } from "../components/Fetch/Wordnik";
 import Title from "../components/UI/Title";
 import DefinitionModal from "../components/UI/DefinitionModal";
 
+Array.prototype.isArray = true;
+
 class Synonym extends Component {
   state = {
     word: this.props.navigation.state.params.wordd,
@@ -20,17 +22,25 @@ class Synonym extends Component {
     isLoading: false,
     modalVisible: false, // control state of Modal,
     definition: [],
-    selectedWord: ""
+    selectedWord: "",
+    error: ""
   };
 
   componentDidMount() {
     this.setState({ isLoading: true });
     getSynonyms(this.state.word)
       .then(list => {
-        this.setState({
-          synonymList: list[0].words,
-          isLoading: false
-        });
+        if (!list.isArray) {
+          console.log(list.message + "... list from rhyme");
+          this.setState({
+            error: list.message
+          });
+        } else {
+          this.setState({
+            synonymList: list[0].words,
+            isLoading: false
+          });
+        }
       })
       .catch(error => {
         console.log(error.message), this.setState({ isLoading: false });
@@ -85,11 +95,28 @@ class Synonym extends Component {
         <View style={styles.wordContainer}>
           <Title
             title={this.state.word}
-            onItemPressed={() => alert("title pressed")}
+            onItemPressed={() => this.onSelectedWord(this.state.word)}
           />
         </View>
 
         <ScrollView style={styles.listContainer}>
+          {this.checkLimit()}
+        </ScrollView>
+      </View>
+    );
+  }
+
+  checkLimit() {
+    if (this.state.error)
+      return (
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.warning}>Warning:</Text>
+          <Text>{this.state.error}</Text>
+        </View>
+      );
+    else
+      return (
+        <View>
           <WordList
             words={this.state.synonymList}
             selectedWord={this.onSelectedWord.bind(this)} // to receive data back from child component
@@ -101,9 +128,8 @@ class Synonym extends Component {
             definition={this.state.definition}
           />
           <Text style={styles.result}>{this.results()}</Text>
-        </ScrollView>
-      </View>
-    );
+        </View>
+      );
   }
 
   render() {
@@ -129,6 +155,12 @@ const styles = StyleSheet.create({
   background: {
     width: "100%",
     height: "100%"
+  },
+  warning: {
+    margin: 10,
+    color: "red",
+    fontSize: 20,
+    fontWeight: "bold"
   },
   modalContainer: {
     flex: 1,
