@@ -9,11 +9,10 @@ A simple dictionary app focuses on showing rhymes, equivalents, synonyms and ant
   - "npm install" // to install all dependencies.
 
   * Run the app on IOS:
-
     - "react-native run-ios".
 
   * Run the app on android:
-    - start android simulator.
+    - start android emulator.
     - "react-native run-android".
     
     
